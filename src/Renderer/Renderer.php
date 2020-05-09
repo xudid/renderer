@@ -6,7 +6,6 @@ namespace Renderer;
  */
 
 //use function Http\Response\send;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -21,10 +20,6 @@ class Renderer implements MiddlewareInterface
 {
 
 	/**
-	 * @var array $urlMatrice
-	 */
-	private $urlMatrice = [];
-	/**
 	 * @var AppPage $page ;
 	 */
 	private $page = null;
@@ -35,35 +30,20 @@ class Renderer implements MiddlewareInterface
 	private array $scriptToHead = [];
 	private array $scriptToEnd = [];
 	private array $moduleInfos = [];
-	/**
-	 * @var ContainerInterface
-	 */
-	private ContainerInterface $container;
+
+
 	private string $path;
-	/**
+    private string $viewsDirectory;
+    /**
 	 * @var object $sidebar
 	 */
 	/**
 	 * Return a Renderer instance
 	 * @param ContainerInterface $container
 	 */
-	function __construct(ContainerInterface $container)
+	function __construct()
 	{
-		if ($container) {
-			$this->container = $container;
-		}
-		if ($this->container->has('app_page_class')) {
-			$this->page = (new $this->container->get('app_page_class'))($this->container);
-		} elseif ($container->has('app_page')) {
-			$page = $container->get('app_page');
-		} else {
 			$this->page = new AppPage();
-		}
-
-		if ($this->container->has('module_infos')) {
-			$this->moduleInfos = $this->container->get('module_infos') ?? [];
-		}
-
 	}
 
 	public function setAppPage(AppPage $appPage)
@@ -98,16 +78,15 @@ class Renderer implements MiddlewareInterface
 
 	}
 
+	public function importMeta(...$metas)
+    {
+        $this->page->importMeta($metas);
+    }
+
 	public function importScript(...$scripts)
 	{
 		foreach ($scripts as $script) {
-			$position = $script->getPosition();
-			if ($script instanceof Script && strcmp($position, Script::SCRIPT_TO_END)) {
-				$this->scriptToEnd[] = $script;
-
-			} elseif ($script instanceof Script && strcmp($position, Script::SCRIPT_TO_HEAD)) {
-				$this->scriptToHead[] = $script;
-			}
+			$this->page->addScript($script);
 		}
 	}
 
@@ -131,8 +110,8 @@ class Renderer implements MiddlewareInterface
 			ob_start();
 			if (is_null($path)) {
 				$path = "";
-				if ($this->container->has("views_directory") && file_exists($this->container->get("views_directory"). "/" . $view )) {
-					$path = $this->container->get("views_directory"). "/" . $view;
+				if (strlen($this->viewsDirectory) > 0 && file_exists($this->viewsDirectory. "/" . $view )) {
+					$path = $this->viewsDirectory. "/" . $view;
 				}
 
 				if (file_exists($this->path. "/" . $view)) {
@@ -145,15 +124,11 @@ class Renderer implements MiddlewareInterface
 			}
 			$content = ob_get_clean();
 			$this->page->setContentView($content);
-
-			return $this->page;
-
 		} else {
 
 			$this->page->setContentView($view);
-
-			return $this->page;
 		}
+        return $this->page;
 	}
 
 	/**
@@ -165,15 +140,15 @@ class Renderer implements MiddlewareInterface
 	{
 
 		$response = $handler->handle($request);
-		if ($this->redirection == "") {
-			$returnAppPage = $request->getAttribute("returnAppPage");
-			if ($returnAppPage) {
-				$response->getBody()->write($this->page);
-			}
-		} else {
-			$response = $response->withHeader("Location", $this->redirection);
-		}
+		if (strlen($this->redirection) >0) {
+            $response = $response->withHeader("Location", $this->redirection);
+            return  $response;
+        }
 
+        $render = $request->getAttribute("render");
+        if ($render) {
+            $response->getBody()->write($this->page);
+        }
 		return $response;
 	}
 
@@ -213,9 +188,30 @@ class Renderer implements MiddlewareInterface
 
 	}
 
+    /**
+     * @param array $moduleInfos
+     */
+    public function setModuleInfos(array $moduleInfos): self
+    {
+        $this->moduleInfos = $moduleInfos;
+        return $this;
+    }
+
+    /**
+     * @param string $viewsDirectory
+     */
+    public function setViewsDirectory(string $viewsDirectory): self
+    {
+        $this->viewsDirectory = $viewsDirectory;
+        return $this;
+    }
+
+
+
 	public function redirectTo($location)
 	{
 		$this->redirection = $location;
+		return $this;
 	}
 
 	/**
