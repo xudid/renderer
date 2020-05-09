@@ -1,7 +1,7 @@
 {
   "name": "xudid/renderer",
   "description": "render content in an html page ",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "license": "MIT",
   "authors": [
     {
@@ -15,7 +15,7 @@
     }
   },
   "require": {
-    "psr/http-server-middleware": "^1.0",
+    "psr/http-server-middleware": "1.0.*",
     "xudid/ui": "dev-master"
   }
 }
