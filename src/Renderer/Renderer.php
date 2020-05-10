@@ -83,7 +83,14 @@ class Renderer
     public function importScript(...$scripts)
     {
         foreach ($scripts as $script) {
-            $this->page->addScript($script);
+            $this->page->importScript($script);
+        }
+    }
+
+    public function feedNavBarItems(...$items)
+    {
+        foreach ($items as $item) {
+            $this->addNavBarItem($item);
         }
     }
 
