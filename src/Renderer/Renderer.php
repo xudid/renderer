@@ -13,7 +13,7 @@ use Ui\Widgets\Views\AppPage;
 /**
  *
  */
-class Renderer implements MiddlewareInterface
+class Renderer
 {
 
     /**
