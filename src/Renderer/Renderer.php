@@ -87,14 +87,16 @@ class Renderer
      * @param object $view
      * @param int $id
      * @param string $path
-     * @return GuzzleHttp\Psr7\Response;
+     * @return AppPage
      */
     public function renderAppPage($view, $id = null, $path = null)
     {
         //Must render html php
         //html and php can be integrate  in appPage or send as his  for ajax request by example
-
-        $extension = $this->getViewExtension($view);
+        $extension = false;
+        if (is_string($view)) {
+            $extension = $this->getViewExtension($view);
+        }
 
         //PHP file must echo the contained view|| HTML
         if (is_string($extension) && (strcmp($extension, ".php") == 0 || strcmp($extension, ".html") == 0)) {
@@ -102,17 +104,17 @@ class Renderer
             ob_start();
             if (is_null($path)) {
                 $path = "";
-                if (strlen($this->viewsDirectory) > 0 && file_exists($this->viewsDirectory . "/" . $view)) {
-                    $path = $this->viewsDirectory . "/" . $view;
+                if (strlen($this->viewsDirectory) > 0 && file_exists($this->viewsDirectory . DIRECTORY_SEPARATOR . $view)) {
+                    $path = $this->viewsDirectory . DIRECTORY_SEPARATOR . $view;
                 }
 
-                if (file_exists($this->path . "/" . $view)) {
-                    $path = $this->path . "/" . $view;
+                if (file_exists($this->path . DIRECTORY_SEPARATOR . $view)) {
+                    $path = $this->path . DIRECTORY_SEPARATOR . $view;
                 }
 
                 include $path;
             } else {
-                require $path . "/" . $view;
+                require $path . DIRECTORY_SEPARATOR . $view;
             }
             $content = ob_get_clean();
             $this->page->setContentView($content);
