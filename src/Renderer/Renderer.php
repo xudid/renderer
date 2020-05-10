@@ -20,23 +20,11 @@ class Renderer
      * @var AppPage $page ;
      */
     private $page = null;
-
-    private $redirection = "";
-
-    private $navbaritems = [];
-    private array $scriptToHead = [];
-    private array $scriptToEnd = [];
-    private array $moduleInfos = [];
-
-
     private string $path;
     private string $viewsDirectory;
+
     /**
-     * @var object $sidebar
-     */
-    /**
-     * Return a Renderer instance
-     * @param ContainerInterface $container
+     * Renderer constructor.
      */
     function __construct()
     {
@@ -90,7 +78,7 @@ class Renderer
     public function feedNavBarItems(...$items)
     {
         foreach ($items as $item) {
-            $this->addNavBarItem($item);
+            $this->page->addNavBarItem($item);
         }
     }
 
@@ -136,31 +124,7 @@ class Renderer
     }
 
 
-    /*
-    * @param array $urls : an array that contains
-    * navigable urls from current url
-    */
-    public function renderSideBar(array $urls)
-    {
-        if (key_exists("GET", $urls)) {
-            foreach ($urls["GET"] as $key => $map) {
-                foreach ($map as $url => $display) {
 
-                    $this->page->addSideBarItem("$display ", "$url");
-                }
-
-            }
-        }
-        if (key_exists("POST", $urls)) {
-            foreach ($urls["POST"] as $key => $map) {
-                foreach ($map as $url => $display) {
-
-                    $this->page->addSideBarItem("$display ", "$url");
-                }
-
-            }
-        }
-    }
 
 
     public function addNavBarItem($type, $path, $display, $altdisplay, $displayside)
@@ -170,14 +134,7 @@ class Renderer
 
     }
 
-    /**
-     * @param array $moduleInfos
-     */
-    public function setModuleInfos(array $moduleInfos): self
-    {
-        $this->moduleInfos = $moduleInfos;
-        return $this;
-    }
+
 
     /**
      * @param string $viewsDirectory
@@ -185,13 +142,6 @@ class Renderer
     public function setViewsDirectory(string $viewsDirectory): self
     {
         $this->viewsDirectory = $viewsDirectory;
-        return $this;
-    }
-
-
-    public function redirectTo($location)
-    {
-        $this->redirection = $location;
         return $this;
     }
 
