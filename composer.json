@@ -16,6 +16,6 @@
   },
   "require": {
     "psr/http-server-middleware": "1.0.*",
-    "xudid/ui": "dev-master"
+    "xudid/ui": "^0.128.1"
   }
 }
