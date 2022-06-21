@@ -2,13 +2,8 @@
 
 namespace Renderer;
 
-/**
- *Renvoie la réponse finale présenté à l'utilisateur
- */
-
-//use function Http\Response\send;
 use Psr\Http\Server\MiddlewareInterface;
-use Ui\Widgets\Views\AppPage;
+use Ui\Widget\View\AppPage;
 
 /**
  *
@@ -34,6 +29,7 @@ class Renderer
     public function setAppPage(AppPage $appPage)
     {
         $this->page = $appPage;
+        return $this;
     }
 
     public function setPath(string $path)
