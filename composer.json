@@ -1,0 +1,21 @@
+{
+  "name": "xudid/renderer",
+  "description": "render content in an html page ",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Didier Moindreau",
+      "email": "dmoindreau@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Renderer\\": "src/Renderer/"
+    }
+  },
+  "require": {
+    "psr/http-server-middleware": "1.0.*",
+    "xudid/ui": "^0.128.1"
+  }
+}
