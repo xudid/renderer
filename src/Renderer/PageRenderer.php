@@ -4,7 +4,7 @@ namespace Renderer;
 
 use Ui\Widget\View\AppPage;
 
-class PageRenderer
+class PageRenderer implements RendererInterface
 {
     protected AppPage $page;
     protected string $path = '';
@@ -76,7 +76,7 @@ class PageRenderer
         return $this;
     }
 
-    public function render($view, $options = [])
+    public function render(mixed $view, array $options = []): string
     {
         //Must render html php
         //html and php can be integrate  in appPage or send as his  for ajax request by example

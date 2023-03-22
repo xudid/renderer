@@ -24,7 +24,7 @@ class RendererMiddleware implements MiddlewareInterface
         }
     }
 
-    public function addRenderingStrategy(string $name, $renderer)
+    public function addRenderingStrategy(string $name, RendererInterface $renderer)
     {
         $this->renderingStrategies[$name] = $renderer;
     }

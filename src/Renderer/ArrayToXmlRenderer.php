@@ -4,10 +4,9 @@ namespace Renderer;
 
 use DOMDocument;
 use DOMElement;
-use DOMException;
 use Exception;
 
-class ArrayToXmlRenderer
+class ArrayToXmlRenderer implements RendererInterface
 {
     private DOMDocument $xml;
 
@@ -19,7 +18,7 @@ class ArrayToXmlRenderer
     /**
      * @throws Exception
      */
-    public function render(array $content, $options = []): string
+    public function render(mixed $content, array $options = []): string
     {
         try {
             $rootKey = $options['root'] ?? 'root';
