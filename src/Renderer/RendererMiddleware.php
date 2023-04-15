@@ -39,12 +39,17 @@ class RendererMiddleware implements MiddlewareInterface
         }
         // Todo implement getPrefferedAcceptHeader use it to get the right renderer
         $extension = $route->getExtension();
+        if ($extension == 'css') {
+            $response->getBody()->write((string)$input);
+            $handler->handle($request);
+            return $response;
+        }
         if ($extension) {
             $renderer = $this->renderingStrategies[$extension];
         } else {
             $renderer = new PageRenderer();
+            $renderer->importCss($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'css/ui.css');
         }
-
         $output = $renderer->render($input);
         $request = $request->withAttribute($this->resultKey, $output);
 
