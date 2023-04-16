@@ -1,7 +1,7 @@
 {
   "name": "xudid/renderer",
   "description": "render content in an html page ",
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
     {
