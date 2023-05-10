@@ -22,12 +22,26 @@ class RendererMiddleware implements MiddlewareInterface
         if ($routeKey) {
             $this->routeKey = $routeKey;
         }
+
+        $renderer = new PageRenderer();
+        $this->renderingStrategies['page'] = $renderer;
     }
 
     public function addRenderingStrategy(string $name, RendererInterface $renderer)
     {
         $this->renderingStrategies[$name] = $renderer;
     }
+
+    public function setPageRenderer(RendererInterface $renderer)
+    {
+        $this->renderingStrategies['page'] = $renderer;
+    }
+
+    public function getPageRenderer(): RendererInterface
+    {
+        return $this->renderingStrategies['page'];
+    }
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute($this->routeKey);
@@ -44,12 +58,14 @@ class RendererMiddleware implements MiddlewareInterface
             $handler->handle($request);
             return $response;
         }
+
         if ($extension) {
-            $renderer = $this->renderingStrategies[$extension];
+            $strategy = $extension;
         } else {
-            $renderer = new PageRenderer();
-            $renderer->importCss($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . 'css/ui.css');
+            $strategy = 'page';
         }
+
+        $renderer = $this->renderingStrategies[$strategy];
         $output = $renderer->render($input);
         $request = $request->withAttribute($this->resultKey, $output);
 
